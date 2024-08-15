@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Label } from '@/components/ui/label';
 
 import {
   Pagination,
@@ -28,12 +27,9 @@ import { useEffect, useState } from 'react';
 import { RecentLink } from './components/ui/recentLink';
 import { ThemeProvider } from './components/theme-provider';
 import { useToast } from '@/components/ui/use-toast';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from './components/ui/popover';
 import { ArrowDownIcon } from './components/arrow';
+import { Input } from './components/ui/input';
+import { QrCodeIcon, CopyIcon, HomeIcon } from 'lucide-react';
 
 interface Link {
   id: string;
@@ -54,7 +50,6 @@ function App() {
   const [tinyUrl, setTinyUrl] = useState('');
   const [qrcode, setQrCode] = useState('');
   const [history, setHistory] = useState<Link[]>([]);
-  const [copyState, setCopyState] = useState('Copy');
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [refresh, setRefresh] = useState(false);
@@ -64,10 +59,11 @@ function App() {
     navigator.clipboard
       .writeText(tinyUrl)
       .then(() => {
-        setCopyState('Copied');
-        setTimeout(() => {
-          setCopyState('Copy');
-        }, 1500);
+        toast({
+          variant: 'default',
+          description: 'Copied to clipboard',
+          duration: 1500,
+        });
       })
       .catch((err) => {
         console.error('Failed to copy text: ', err);
@@ -178,7 +174,7 @@ function App() {
       .then((data) => {
         setLoader(false);
         setTotalPages(data.totalPages);
-        setRecent(data.data.slice(0, 2));
+        setRecent(data.data.slice(0, 4));
         setHistory(data.data);
       })
       .catch((e) => {
@@ -204,7 +200,7 @@ function App() {
                         History
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className=''>
+                    <DialogContent className='max-w-fit'>
                       <DialogTitle hidden></DialogTitle>
                       <DialogDescription hidden></DialogDescription>
                       {hloader && (
@@ -267,111 +263,105 @@ function App() {
                 </div>
               </div>
             </header>
-            <div className='w-full  bg-white dark:bg-gray-800 p-8'>
-              <div className='flex flex-col items-center justify-center h-full'>
-                <h1 className='text-2xl font-semibold text-gray-900 dark:text-white mb-6'>
-                  Scissors
-                </h1>
-                {onHome && (
-                  <>
-                    <div className='w-full max-w-md flex flex-col gap-3'>
-                      <div className='rounded-md shadow-sm'>
-                        <input
-                          onChange={(e) => setUrl(e.currentTarget.value)}
-                          type='text'
-                          placeholder='Enter your URL here'
-                          className='block w-full text-lg py-3 px-4 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white'
-                        />
-                      </div>
-                      <div className='rounded-md shadow-sm'>
-                        <input
-                          onChange={(e) => setCustom(e.currentTarget.value)}
-                          type='text'
-                          placeholder='Enter  alias'
-                          className='block w-full text-lg py-3 px-4 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white'
-                        />
-                      </div>
-                      <Button
-                        className='w-full mt-4 py-2 rounded-b-md'
-                        onClick={shorten}
-                      >
-                        Shorten URL
-                      </Button>
-                    </div>
-                    <div className='w-full max-w-md mt-8'>
-                      <h2 className='text-lg font-medium text-gray-900 dark:text-white mb-4'>
-                        Recently Shortened URLs
-                      </h2>
-                      <div className='space-y-4'>
-                        {recent.map((link) => (
-                          <RecentLink
-                            key={link.id}
-                            clicks={link.clicks}
-                            shortUrl={link.shortUrl}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-                {!onHome && (
-                  <>
-                    <div className='w-full max-w-md flex flex-col gap-2'>
-                      <div className='rounded-md shadow-sm'>
-                        <Label htmlFor='longurl'>Your long URL</Label>
-                        <input
-                          type='text'
-                          id='longurl'
-                          disabled
-                          value={url}
-                          className='block w-full text-lg py-3 px-4 placeholder-gray-500 text-gray-900 rounded-t-md focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white'
-                        />
-                      </div>
-                      <div className='rounded-md shadow-sm'>
-                        <Label htmlFor='shorturl'>Short URL</Label>
-                        <input
-                          type='text'
-                          id='shorturl'
-                          disabled
-                          value={tinyUrl}
-                          className='block w-full text-lg py-3 px-4 placeholder-gray-500 text-gray-900 rounded-t-md  focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white'
-                        />
-                      </div>
-                      <div className='flex gap-2 '>
-                        <Popover>
-                          <PopoverTrigger className='w-full'>
-                            <Button className='w-full mt-4 py-2 rounded-b-md'>
-                              QR code
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent>
-                            <div className='flex gap-2 items-center'>
-                              <img src={qrcode} alt='demo' />
-                              <Button onClick={() => downloadQrcode(qrcode)}>
-                                Download
-                              </Button>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
 
-                        <Button
-                          className='w-full mt-4 py-2 rounded-b-md'
-                          onClick={copyToBoard}
-                        >
-                          {copyState}
-                        </Button>
-                        <Button
-                          className='w-full mt-4 py-2 rounded-b-md'
-                          onClick={goHome}
-                        >
-                          Shorten another
-                        </Button>
+            {onHome && (
+              <>
+                <div className='flex flex-col bg-background h-full'>
+                  <header className='w-full py-8 md:py-12 lg:py-16'>
+                    <div className='container mx-auto px-4 md:px-6'>
+                      <div className='mx-auto max-w-3xl text-center'>
+                        <h1 className='text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl'>
+                          Shorten Your Links
+                        </h1>
+                        <p className='mt-4 text-muted-foreground md:text-xl'>
+                          Simplify your online presence with our powerful URL
+                          shortening tool.
+                        </p>
+                        <div className='mt-8 flex w-full items-center gap-2 justify-center'>
+                          <Input
+                            type='url'
+                            placeholder='Enter your long URL'
+                            className='flex-1'
+                            value={url}
+                            onChange={(e) => setUrl(e.target.value)}
+                          />
+                          <Button type='submit' onClick={shorten}>
+                            Shorten
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </>
-                )}
-              </div>
-            </div>
+                  </header>
+                  <main className='flex-1'>
+                    <section className='w-full py-8 md:py-12 lg:py-16'>
+                      <div className='container mx-auto px-4 md:px-6'>
+                        <h2 className='text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl'>
+                          Your Recent Shortened URLs
+                        </h2>
+                        <div className='mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+                          {recent.map((link) => (
+                            <RecentLink
+                              key={link.id}
+                              shortUrl={link.shortUrl}
+                              clicks={link.clicks}
+                              longurl={link.originalUrl}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </section>
+                  </main>
+                  <footer className='bg-muted p-6 md:py-8'>
+                    <div className='container mx-auto px-4 md:px-6'>
+                      <p className='text-center text-sm text-muted-foreground'>
+                        &copy; 2024 Scissors. All rights reserved.
+                      </p>
+                    </div>
+                  </footer>
+                </div>
+              </>
+            )}
+            {!onHome && (
+              <>
+                <main className='flex-1'>
+                  <section className='w-full py-8 md:py-12 lg:py-16'>
+                    <div className='container mx-auto px-4 md:px-6'>
+                      <h2 className='text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl'>
+                        Your Shortened URL
+                      </h2>
+                      <div className='mt-6 rounded-md border bg-card p-4 shadow-sm'>
+                        <div className='flex items-center justify-between'>
+                          <p className='text-sm font-medium'>{tinyUrl}</p>
+                          <div className='flex items-center gap-2'>
+                            <Button variant='ghost' size='sm'>
+                              <QrCodeIcon
+                                className='h-4 w-4'
+                                onClick={() => downloadQrcode(qrcode)}
+                              />
+                              <span className='sr-only'>Download QR</span>
+                            </Button>
+                            <Button variant='ghost' size='sm'>
+                              <CopyIcon
+                                className='h-4 w-4'
+                                onClick={copyToBoard}
+                              />
+                              <span className='sr-only'>Copy</span>
+                            </Button>
+                            <Button variant='ghost' size='sm'>
+                              <HomeIcon className='h-4 w-4' onClick={goHome} />
+                              <span className='sr-only'>Home</span>
+                            </Button>
+                          </div>
+                        </div>
+                        <p className='mt-2 text-sm text-muted-foreground'>
+                          {url}
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+                </main>
+              </>
+            )}
           </div>
         )}
       </>

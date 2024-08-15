@@ -1,36 +1,45 @@
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { CopyIcon } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 export const RecentLink = ({
   shortUrl,
   clicks,
+  longurl,
 }: {
   shortUrl: string;
   clicks: number;
+  longurl: string;
 }) => {
-  const [copyState, setCopyState] = useState('Copy');
+  const { toast } = useToast();
   function copyToBoard() {
     navigator.clipboard
       .writeText(shortUrl)
       .then(() => {
-        setCopyState('Copied');
-        setTimeout(() => {
-          setCopyState('Copy');
-        }, 2000);
+        toast({
+          variant: 'default',
+          description: 'Copied to clipboard',
+          duration: 1500,
+        });
       })
       .catch((err) => {
         console.error('Failed to copy text: ', err);
       });
   }
   return (
-    <div className='flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-4 rounded-md'>
-      <div>
-        <p className='text-sm text-gray-900 dark:text-white mb-1'>{shortUrl}</p>
-        <p className='text-xs text-gray-500'>Clicked {clicks} times</p>
+    <div className='rounded-md border bg-card p-4 shadow-sm'>
+      <div className='flex items-center justify-between'>
+        <p className='text-sm font-medium'>{shortUrl}</p>
+        <div className='flex items-center gap-2'>
+          <Button variant='ghost' size='sm'>
+            <CopyIcon className='h-4 w-4' onClick={copyToBoard} />
+          </Button>
+        </div>
       </div>
-      <Button variant='ghost' size='sm' onClick={copyToBoard}>
-        {copyState}
-      </Button>
+      <p className='mt-2 text-sm text-muted-foreground'>{longurl}</p>
+      <div className='mt-4 flex items-center justify-between'>
+        <p className='text-sm text-muted-foreground'>Clicks: {clicks}</p>
+      </div>
     </div>
   );
 };
