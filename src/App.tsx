@@ -27,7 +27,6 @@ import { useEffect, useState } from 'react';
 import { RecentLink } from './components/ui/recentLink';
 import { ThemeProvider } from './components/theme-provider';
 import { useToast } from '@/components/ui/use-toast';
-import { ArrowDownIcon } from './components/arrow';
 import { Input } from './components/ui/input';
 import { QrCodeIcon, CopyIcon, HomeIcon } from 'lucide-react';
 
@@ -230,7 +229,7 @@ function App() {
                                   <Button
                                     onClick={() => downloadQrcode(link.qrcode)}
                                   >
-                                    <ArrowDownIcon className='h-4 w-4 hover:cursor-pointer' />
+                                    <QrCodeIcon className='h-4 w-4 hover:cursor-pointer' />
                                   </Button>
                                 </TableCell>
                               </TableRow>
