@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
+import { Typewriter } from 'react-simple-typewriter';
 import {
   Pagination,
   PaginationContent,
@@ -273,8 +273,11 @@ function App() {
                           Shorten Your Links
                         </h1>
                         <p className='mt-4 text-muted-foreground md:text-xl'>
-                          Simplify your online presence with our powerful URL
-                          shortening tool.
+                          <Typewriter
+                            words={[
+                              'Simplify your online presence with our powerful URL shortening tool.',
+                            ]}
+                          />
                         </p>
                         <div className='mt-8 flex w-full items-center gap-2 justify-center'>
                           <Input
@@ -310,7 +313,7 @@ function App() {
                       </div>
                     </section>
                   </main>
-                  <footer className='bg-muted p-6 md:py-8'>
+                  <footer className=' p-6 md:py-8 mt-12'>
                     <div className='container mx-auto px-4 md:px-6'>
                       <p className='text-center text-sm text-muted-foreground'>
                         &copy; 2024 Scissors. All rights reserved.
