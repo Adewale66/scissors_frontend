@@ -287,6 +287,13 @@ function App() {
                             value={url}
                             onChange={(e) => setUrl(e.target.value)}
                           />
+                          <Input
+                            value={custom}
+                            onChange={(e) => setCustom(e.target.value)}
+                            type='text'
+                            placeholder='Enter an alias (optional)'
+                            className='flex-1'
+                          />
                           <Button type='submit' onClick={shorten}>
                             Shorten
                           </Button>
